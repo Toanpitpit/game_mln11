@@ -7,11 +7,16 @@ import './EndingSlideshow.css';
 const SLIDE_TIMES = [11000, 11000, 12000];
 
 const team = [
-  ['Nguyễn Văn A', '3D Graphics & World Design'],
-  ['Trần Thị B', 'Gameplay Programmer'],
-  ['Lê Văn C', 'UI/UX Front-end Web'],
-  ['Thành viên 4', 'Narrative & Research'],
-  ['Thành viên 5', 'Sound & Quality Assurance'],
+  'Nguyễn Minh Tuấn',
+  'Võ Hoàng Phúc',
+  'Đỗ Tiến Mạnh',
+  'Bùi Văn Nam',
+  'Lương Trọng Đức',
+  'Tạ Văn Toàn',
+  'Nguyễn Trọng Hiệp',
+  'Nguyễn Huy Hoàng',
+  'Lê Xuân Dũng',
+  'Phan Văn Giáp',
 ];
 
 let stopAudio;
@@ -187,19 +192,27 @@ function SlideThree() {
 }
 
 function SlideFour({ onReplay }) {
+  const [showFinalCard, setShowFinalCard] = useState(false);
+
   return (
     <div className="credits-viewport">
-      <div className="credits-roll">
+      <div className="credits-roll" onAnimationEnd={() => setShowFinalCard(true)}>
         <p className="ending-kicker">DIALECTICAL FLOW</p>
         <h1>CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH<br />HÀNH TRÌNH NHẬN THỨC</h1>
         <p className="good-ending">(Game Over - Good Ending)</p>
         <div className="credits-divider" />
         <p>Môn học: <strong>Triết học Mác - Lênin (Triết 111)</strong></p>
         <h2>ĐỘI NGŨ PHÁT TRIỂN</h2>
-        {team.map(([name, role]) => <p className="credit-person" key={name}><strong>{name}</strong><span>{role}</span></p>)}
-        <p className="credits-thanks">Cảm ơn bạn đã bước tới tận cùng của hành trình.</p>
-        <button className="replay-button" onClick={onReplay}>CHƠI LẠI</button>
+        {team.map((name) => <p className="credit-person" key={name}><strong>{name}</strong></p>)}
       </div>
+      <AnimatePresence>
+        {showFinalCard && (
+          <motion.div className="credits-final-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.4 }}>
+            <p className="credits-thanks">Cảm ơn bạn đã bước tới tận cùng của hành trình.</p>
+            <button className="replay-button" onClick={onReplay}>CHƠI LẠI</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
