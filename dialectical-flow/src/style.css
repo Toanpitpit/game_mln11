@@ -6,6 +6,37 @@ body {
   overflow-x: hidden;
 }
 
+.ambient-audio-toggle {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 9000;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  color: #cbd5e1;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: 0.25s ease;
+}
+
+.ambient-audio-toggle:hover {
+  border-color: rgba(56, 189, 248, 0.8);
+  color: #7dd3fc;
+  transform: translateY(-2px);
+}
+
+.ambient-audio-toggle svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+
 /* Glassmorphism utilities */
 .glass-panel {
   background: rgba(30, 41, 59, 0.7);
@@ -104,4 +135,21 @@ body {
 .craft-btn:disabled {
   background: #334155;
   opacity: 0.6;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.4);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.8);
 }

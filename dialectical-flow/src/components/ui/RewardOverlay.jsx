@@ -2,12 +2,14 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../store/useGameStore';
+import { playGameSfx } from '../audio/AmbientAudio';
 
 const RewardOverlay = () => {
   const { rewardPopup, setRewardPopup, addItem, setViewState } = useGameStore();
 
   const handleCollectItem = () => {
     if (rewardPopup) {
+      playGameSfx('pickup');
       addItem(rewardPopup);
       const targetState = rewardPopup.targetViewState || 'BRANCH';
       setRewardPopup(null);

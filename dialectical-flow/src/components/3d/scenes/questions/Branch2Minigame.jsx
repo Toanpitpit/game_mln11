@@ -6,6 +6,7 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useGameStore } from '../../../../store/useGameStore';
 import questionsData from '../../../../data/questions.json';
+import { playGameSfx } from '../../../audio/AmbientAudio';
 
 const DraggableFragment = ({ idx, optionText, initialPos, onDrop, isCorrect }) => {
   const { size, viewport } = useThree();
@@ -63,6 +64,7 @@ const Branch2Minigame = () => {
     if (answeredState) return;
 
     if (isCorrect) {
+      playGameSfx('correct');
       setAnsweredState('correct');
       // Morph into a bridge
       api.start({
@@ -91,6 +93,7 @@ const Branch2Minigame = () => {
       }, 2000);
 
     } else {
+      playGameSfx('wrong');
       setAnsweredState('wrong');
       // Fall into chasm
       api.start({

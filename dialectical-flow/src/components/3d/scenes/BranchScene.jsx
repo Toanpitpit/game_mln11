@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { playGameSfx } from '../../audio/AmbientAudio';
 import { useGameStore } from '../../../store/useGameStore';
 import questionsData from '../../../data/questions.json';
 
@@ -323,6 +324,7 @@ const BranchScene = () => {
     if (cooldownNodes[q.id]) return;
 
     if (viewState === 'BRANCH') {
+      playGameSfx('navigate');
       const globalIndex = questionsData.findIndex(item => item.id === q.id);
       setActiveNode(globalIndex);
       setViewState('QUESTION');

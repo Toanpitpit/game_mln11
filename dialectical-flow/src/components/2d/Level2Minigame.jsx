@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Level2Minigame.css';
 import { useGameStore } from '../../store/useGameStore.js';
+import { playGameSfx } from '../audio/AmbientAudio.jsx';
 
 const dialoguesHegel = [
     "[1] Sự phát triển luôn bắt đầu từ việc tích lũy dần dần về Lượng.",
@@ -94,6 +95,7 @@ const Level2Minigame = () => {
     };
 
     const handleExit = () => {
+        playGameSfx('correct');
         setRewardPopup({ id: 'badge2', name: 'Huy hiệu Biện Chứng', icon: '🌟', targetViewState: 'HUB' });
         setViewState('HUB');
     };
@@ -109,6 +111,7 @@ const Level2Minigame = () => {
     useEffect(() => { quizRef.current = quizSelectedIndex; }, [quizSelectedIndex]);
 
     const handleInteractCore = () => {
+        playGameSfx('click');
         const p = stateRef.current.player;
         const state = stateRef.current;
         let interacted = false;
@@ -150,6 +153,7 @@ const Level2Minigame = () => {
                     if (el && el.style.display !== 'none') {
                         el.style.display = 'none';
                         setInventory(prev => [...prev, { id: 'energy_block', name: 'Khối năng lượng', icon: '🔋', type: 'equip', desc: 'Sự tích lũy về lượng.' }]);
+                        playGameSfx('pickup');
                         showFlash("ĐÃ NHẶT: KHỐI NĂNG LƯỢNG");
                     }
                 }
@@ -159,6 +163,7 @@ const Level2Minigame = () => {
                         state.flags.hasDarkOrb = true;
                         el.style.display = 'none';
                         setInventory(prev => [...prev, { id: 'orb_black', name: 'Quả cầu Bóng tối', icon: '🔮', type: 'equip', desc: 'Mặt đối lập của ánh sáng.' }]);
+                        playGameSfx('pickup');
                         showFlash("ĐÃ NHẶT: QUẢ CẦU BÓNG TỐI");
                     }
                 }
@@ -182,6 +187,7 @@ const Level2Minigame = () => {
                             showFlash(`Đang trong giới hạn Độ (${pct}%). Chưa có sự thay đổi về Chất.`);
                         } else {
                             state.flags.machineJumped = true;
+                            playGameSfx('craft');
                             showFlash("Đạt ĐIỂM NÚT! Bước nhảy xảy ra!");
                             document.getElementById('l2-machine-screen').textContent = "MAX";
                             document.getElementById('l2-machine-screen').style.color = "#fff";
@@ -207,6 +213,7 @@ const Level2Minigame = () => {
                     
                     if (hasWhite && hasBlack) {
                         state.flags.fusionDone = true;
+                        playGameSfx('craft');
                         const newInv = invRef.current.filter(i => i.id !== 'orb_white' && i.id !== 'orb_black');
                         
                         const ped = document.getElementById('l2-fusion-pedestal');
@@ -231,6 +238,7 @@ const Level2Minigame = () => {
                         const keyIndex = invRef.current.findIndex(i => i.id === 'key_dialect');
                         if (keyIndex !== -1) {
                             state.flags.doorUnlocked = true;
+                            playGameSfx('unlock');
                             document.getElementById('l2-door-lock-ui').textContent = "🔓";
                             document.getElementById('l2-exit-door').classList.add('unlocked');
                             showFlash("Cửa đã được mở khóa bằng Chìa khóa Biện chứng!");

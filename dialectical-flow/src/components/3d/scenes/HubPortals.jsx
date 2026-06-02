@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { useGameStore } from '../../../store/useGameStore';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
+import { playGameSfx } from '../../audio/AmbientAudio';
 
 const PortalGalaxy = ({ color, isUnlocked }) => {
   const pointsRef = useRef();
@@ -124,6 +125,7 @@ const Portal = ({ position, color, branchId, name, requiredItems }) => {
   useEffect(() => {
     if (!wasUnlocked && isUnlocked) {
       // Just unlocked!
+      playGameSfx('unlock');
       setIsShattering(true);
       setTimeout(() => {
         setIsShattering(false);
@@ -135,12 +137,14 @@ const Portal = ({ position, color, branchId, name, requiredItems }) => {
   const handleClick = (e) => {
     e.stopPropagation();
     if (isUnlocked) {
+      playGameSfx('portal');
       setCurrentBranch(branchId);
       setViewState('WARPING');
       setTimeout(() => {
         setViewState('BRANCH');
       }, 2500); // 2.5s warp effect
     } else {
+      playGameSfx('locked');
       setLockedPortalTarget(branchId);
     }
   };
