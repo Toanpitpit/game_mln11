@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Row, Col } from 'react-bootstrap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../../store/useGameStore';
+import { playGameSfx } from '../../audio/AmbientAudio';
 
 const InventoryModal = ({ show, onHide }) => {
   const inventory = useGameStore((state) => state.inventory);
@@ -21,6 +22,7 @@ const InventoryModal = ({ show, onHide }) => {
     if (isCrafting || craftedResult) return;
     const data = e.dataTransfer.getData('application/json');
     if (data) {
+      playGameSfx('navigate');
       const item = JSON.parse(data);
       setSlots((prev) => {
         const newSlots = [...prev];
@@ -47,10 +49,12 @@ const InventoryModal = ({ show, onHide }) => {
 
   const handleCraft = () => {
     if (!slots[0] || !slots[1]) {
+      playGameSfx('wrong');
       setCraftMessage('⚠️ Vui lòng đặt đủ 2 vật phẩm vào máy hợp nhất!');
       return;
     }
     if (slots[0] && slots[1]) {
+      playGameSfx('craft');
       setIsCrafting(true);
       setCraftMessage('Đang vận hành Lò Hợp Nhất...');
       
@@ -59,9 +63,11 @@ const InventoryModal = ({ show, onHide }) => {
         const result = craftItem(slots[0].id, slots[1].id);
         setIsCrafting(false);
         if (result) {
+          playGameSfx('unlock');
           setCraftedResult(result);
           setCraftMessage('✨ Hợp nhất thành công!');
         } else {
+          playGameSfx('wrong');
           setCraftMessage('❌ Các mảnh ghép không tương thích!');
           setSlots([null, null]);
         }

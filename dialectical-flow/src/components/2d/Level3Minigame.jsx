@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Level3Minigame.css';
 import { useGameStore } from '../../store/useGameStore.js';
 import { startEndingAudio } from './EndingSlideshow.jsx';
+import { playGameSfx } from '../audio/AmbientAudio.jsx';
 
 const Level3Minigame = () => {
     const { setViewState } = useGameStore();
@@ -52,6 +53,7 @@ const Level3Minigame = () => {
     const addItem = (item) => {
         if (!inventory.some(i => i.id === item.id)) {
             setInventory(prev => [...prev, item]);
+            playGameSfx('pickup');
             showFlash(`Đã lấy: ${item.name}`);
         }
     };
@@ -64,6 +66,7 @@ const Level3Minigame = () => {
             let idx = loop.indexOf(currentRoom);
             if (dir === 'left') idx = (idx - 1 + 4) % 4;
             if (dir === 'right') idx = (idx + 1) % 4;
+            playGameSfx('navigate');
             setCurrentRoom(loop[idx]);
         }
     };
@@ -156,6 +159,7 @@ const Level3Minigame = () => {
         else if (target === 'skull') {
             if (selectedItem === 'serum_truth' && !isPurifying) {
                 showFlash("Huyết thanh kích hoạt. Hộp sọ phát sáng, bóng đen rùng mình.");
+                playGameSfx('purify');
                 startEndingAudio();
                 setIsPurifying(true);
                 setFlags(f => ({...f, corruptedSoulSaved: true}));
@@ -177,6 +181,7 @@ const Level3Minigame = () => {
                 if (selectedItem === 'blood_root') setFlags(f => ({...f, beakerBlood: f.beakerBlood + 1}));
                 if (selectedItem === 'moonlight') setFlags(f => ({...f, beakerMoonlight: f.beakerMoonlight + 1}));
                 showFlash("Đã nhỏ 1 giọt vào bình.");
+                playGameSfx('liquid');
             } else {
                 showFlash("Cần chọn một bình chứa dung dịch.");
             }
@@ -184,6 +189,7 @@ const Level3Minigame = () => {
         else if (target === 'alchemy_light_burner') {
             if (selectedItem === 'matchbox') {
                 setFlags(f => ({...f, burnerOn: true}));
+                playGameSfx('fire');
                 showFlash("Đã châm lửa bếp cồn.");
             } else {
                 showFlash("Cần Bao diêm để châm lửa.");
@@ -194,16 +200,19 @@ const Level3Minigame = () => {
                 // Check Recipe 1: 1 Bile + 1 Tears
                 if (flags.beakerBile === 1 && flags.beakerTears === 1 && flags.beakerBlood === 0 && flags.beakerMoonlight === 0) {
                     showFlash("Phản ứng xảy ra! Thu được Sương mù xung đột.");
+                    playGameSfx('craft');
                     addItem({ id: 'mist_conflict', name: 'Sương mù Xung đột', icon: '/level3/items/mist.png' });
                     setFlags(f => ({...f, beakerBile: 0, beakerTears: 0, burnerOn: false}));
                 }
                 // Check Recipe 2: 2 Tears + 1 Blood
                 else if (flags.beakerBile === 0 && flags.beakerTears === 2 && flags.beakerBlood === 1 && flags.beakerMoonlight === 0) {
                     showFlash("Phản ứng xảy ra! Thu được Huyết thanh Trí nhớ.");
+                    playGameSfx('craft');
                     addItem({ id: 'serum_truth', name: 'Huyết thanh Trí nhớ', icon: '/level3/items/serum.png' });
                     setFlags(f => ({...f, beakerTears: 0, beakerBlood: 0, burnerOn: false}));
                 } else {
                     showFlash("Dung dịch bay hơi vô ích. Sai công thức.");
+                    playGameSfx('wrong');
                     setFlags(f => ({...f, beakerBile: 0, beakerTears: 0, beakerBlood: 0, beakerMoonlight: 0, burnerOn: false}));
                 }
             } else if (!flags.burnerOn) {

@@ -5,6 +5,7 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useGameStore } from '../../../../store/useGameStore';
 import questionsData from '../../../../data/questions.json';
+import { playGameSfx } from '../../../audio/AmbientAudio';
 
 const ConveyorFloor = () => {
   const [ref] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], position: [0, -2, 0] }));
@@ -89,6 +90,7 @@ const Branch3Minigame = () => {
     if (answeredState) return;
 
     if (success) {
+      playGameSfx('correct');
       setAnsweredState('correct');
       answerQuestion(question.id, true);
       
@@ -107,6 +109,7 @@ const Branch3Minigame = () => {
         }
       }, 1000);
     } else {
+      playGameSfx('wrong');
       setAnsweredState('wrong');
       answerQuestion(question.id, false);
       setTimeout(() => {

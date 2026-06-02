@@ -7,6 +7,7 @@ import GateGuardianModal from './components/ui/GateGuardianModal';
 import Level2Minigame from './components/2d/Level2Minigame';
 import Level3Minigame from './components/2d/Level3Minigame';
 import EndingSlideshow from './components/2d/EndingSlideshow';
+import AmbientAudio from './components/audio/AmbientAudio';
 import { useGameStore } from './store/useGameStore';
 import { Button } from 'react-bootstrap';
 
@@ -59,6 +60,7 @@ function App() {
         <MainCanvas />
       </ErrorBoundary>
 
+      <AmbientAudio />
       {viewState === 'ENDING' && <EndingSlideshow />}
       
       {/* 2D UI Overlay Layer */}

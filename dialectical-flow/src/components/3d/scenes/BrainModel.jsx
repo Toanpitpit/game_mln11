@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { Sparkles, Float, Stars } from '@react-three/drei';
 import { useGameStore } from '../../../store/useGameStore';
 import * as THREE from 'three';
+import { playGameSfx } from '../../audio/AmbientAudio';
 
 const NeuralNetworkBrain = () => {
   const { positions, lines, colors } = useMemo(() => {
@@ -183,6 +184,7 @@ const BrainModel = () => {
 
   const handleClick = (e) => {
     e.stopPropagation();
+    playGameSfx('portal');
     // Nếu người dùng kéo thả chuột (drag) để xoay não, e.delta sẽ lớn hơn 5.
     // Ta return luôn để KHÔNG kích hoạt sự kiện click (vào trong màn).
     if (e.delta > 5) return; 
