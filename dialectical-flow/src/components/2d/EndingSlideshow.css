@@ -41,15 +41,16 @@
 .action-slide p:not(.ending-kicker) { color: #d4cec3; font-size: clamp(17px, 1.75vw, 25px); line-height: 1.65; margin: 8px 0; }
 
 .credits-viewport { position: relative; overflow: hidden; text-align: center; background: radial-gradient(circle at 50% 75%, rgba(42,32,15,.58), #020202 62%); }
-.credits-roll { display: flex; flex-direction: column; align-items: center; padding: 100vh 24px 120px; animation: credits-rise 26s linear forwards; }
-@keyframes credits-rise { from { transform: translateY(0); } to { transform: translateY(-92%); } }
+.credits-roll { display: flex; flex-direction: column; align-items: center; padding: 0 24px; animation: credits-rise 32s linear forwards; }
+@keyframes credits-rise { from { transform: translateY(100vh); } to { transform: translateY(-100%); } }
 .credits-roll h1 { color: var(--gold); font-size: clamp(26px, 3.3vw, 52px); line-height: 1.35; letter-spacing: .04em; margin: 14px 0; }
 .good-ending, .credits-thanks { color: #aaa294; font-style: italic; }
 .credits-divider { width: 90px; height: 1px; margin: 34px 0; background: var(--gold); }
 .credits-roll h2 { color: var(--gold); font: 600 15px/1.5 var(--ending-sans); letter-spacing: .12em; margin: 48px 0 22px; }
 .credit-person { margin: 10px 0; }
-.credit-person span { display: block; color: #aaa294; font: 400 13px/1.6 var(--ending-sans); letter-spacing: normal; }
 .credits-thanks { margin: 54px 0 30px; }
+.credits-final-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.credits-final-card .credits-thanks { margin: 0 0 30px; }
 .replay-button, .ending-next { border: 1px solid rgba(215,181,102,.72); color: var(--gold); background: rgba(215,181,102,.06); font: 600 12px/1 var(--ending-sans); letter-spacing: .12em; padding: 14px 22px; transition: .3s ease; }
 .replay-button:hover, .ending-next:hover { color: #050505; background: var(--gold); }
 
