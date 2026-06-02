@@ -5,10 +5,25 @@ import BrainModel from './scenes/BrainModel';
 import HubPortals from './scenes/HubPortals';
 import WarpSpeed from './effects/WarpSpeed';
 import BranchScene from './scenes/BranchScene';
+import { useGameStore } from '../../store/useGameStore';
 
 const MainCanvas = () => {
+  const viewState = useGameStore((state) => state.viewState);
+
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1, backgroundColor: '#050811' }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 1,
+        backgroundColor: '#050811',
+        opacity: viewState === 'ENDING' ? 0 : 1,
+        transition: 'opacity 2.4s ease',
+      }}
+    >
       <Canvas
         camera={{ position: [0, 0, 35], fov: 50 }}
         gl={{ antialias: true, alpha: false }}
