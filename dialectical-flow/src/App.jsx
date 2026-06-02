@@ -39,16 +39,7 @@ function App() {
   const setViewState = useGameStore((state) => state.setViewState);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (import.meta.env.DEV) {
-      if (params.has('ending-preview')) {
-        setViewState('ENDING');
-      } else if (params.has('level2')) {
-        setViewState('BRANCH');
-        useGameStore.getState().setCurrentBranch(2);
-      }
-      // removed level3 shortcut - must progress through game normally
-    }
+    // All dev shortcuts removed - must progress through game normally
   }, [setViewState]);
 
   const giveTestItems = () => {
