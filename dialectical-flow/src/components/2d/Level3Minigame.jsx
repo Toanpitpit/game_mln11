@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Level3Minigame.css';
 import { useGameStore } from '../../store/useGameStore.js';
+import { startEndingAudio } from './EndingSlideshow.jsx';
 
 const Level3Minigame = () => {
     const { setViewState } = useGameStore();
@@ -12,6 +13,7 @@ const Level3Minigame = () => {
     const [popup, setPopup] = useState(null); // 'family_tree', 'syllabus', null
     const [isInventoryOpen, setIsInventoryOpen] = useState(false);
     const [introStep, setIntroStep] = useState(0);
+    const [isPurifying, setIsPurifying] = useState(false);
 
     const introTexts = [
         "Ta là Kẻ Kế Thừa cuối cùng của dòng họ... Nơi đây từng là thánh địa Giả kim thuật của chúng ta.",
@@ -152,14 +154,15 @@ const Level3Minigame = () => {
             }
         }
         else if (target === 'skull') {
-            if (selectedItem === 'serum_truth') {
+            if (selectedItem === 'serum_truth' && !isPurifying) {
                 showFlash("Huyết thanh kích hoạt. Hộp sọ phát sáng, bóng đen rùng mình.");
+                startEndingAudio();
+                setIsPurifying(true);
                 setFlags(f => ({...f, corruptedSoulSaved: true}));
                 setTimeout(() => {
                     showFlash("Bóng đen tan biến. Chân lý Tuyệt đối đã được phơi bày!");
-                    // Trigger Win
-                    setTimeout(() => setViewState('HUB'), 4000);
-                }, 3000);
+                }, 1200);
+                setTimeout(() => setViewState('ENDING'), 3000);
             } else {
                 showFlash("Bóng đen ôm chặt chiếc hộp sọ. Nó cần kí ức để siêu thoát.");
             }
@@ -229,7 +232,7 @@ const Level3Minigame = () => {
     };
 
     return (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center', pointerEvents: 'auto' }}>
+        <div className={isPurifying ? 'l3-ending-fade' : ''} style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center', pointerEvents: 'auto' }}>
             <div className="level3-wrapper">
                 
                 {/* Main View Area */}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import HUD from './components/ui/hud/HUD';
 import MainCanvas from './components/3d/MainCanvas';
 import QuestionOverlay from './components/ui/QuestionOverlay';
@@ -6,6 +6,7 @@ import RewardOverlay from './components/ui/RewardOverlay';
 import GateGuardianModal from './components/ui/GateGuardianModal';
 import Level2Minigame from './components/2d/Level2Minigame';
 import Level3Minigame from './components/2d/Level3Minigame';
+import EndingSlideshow from './components/2d/EndingSlideshow';
 import { useGameStore } from './store/useGameStore';
 import { Button } from 'react-bootstrap';
 
@@ -34,6 +35,13 @@ function App() {
   const addItem = useGameStore((state) => state.addItem);
   const viewState = useGameStore((state) => state.viewState);
   const currentBranch = useGameStore((state) => state.currentBranch);
+  const setViewState = useGameStore((state) => state.setViewState);
+
+  useEffect(() => {
+    if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('ending-preview')) {
+      setViewState('ENDING');
+    }
+  }, [setViewState]);
 
   const giveTestItems = () => {
     addItem({ id: 'stone', name: 'Khối đá nguyên thủy', icon: '🪨' });
@@ -50,9 +58,11 @@ function App() {
       <ErrorBoundary>
         <MainCanvas />
       </ErrorBoundary>
+
+      {viewState === 'ENDING' && <EndingSlideshow />}
       
       {/* 2D UI Overlay Layer */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 10 }}>
+      {viewState !== 'ENDING' && <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 10 }}>
         
         <QuestionOverlay />
         <RewardOverlay />
@@ -81,7 +91,7 @@ function App() {
           <Level3Minigame />
         )}
 
-      </div>
+      </div>}
     </>
   );
 }
