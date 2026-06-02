@@ -4,12 +4,41 @@ import { GiBackpack } from 'react-icons/gi';
 import { useGameStore } from '../../../store/useGameStore';
 import InventoryModal from '../inventory/InventoryModal';
 
+import questionsData from '../../../data/questions.json';
+
 const HUD = () => {
-  const { inventory, viewState, setViewState } = useGameStore();
+  const { inventory, viewState, setViewState, cooldownNodes, resetCooldowns, currentBranch, answeredQuestions } = useGameStore();
   const [showModal, setShowModal] = useState(false);
+
+  // Check dead end condition
+  let isDeadEnd = false;
+  if (currentBranch) {
+    const branchQuestions = questionsData.filter(q => q.branchId === currentBranch);
+    const unanswered = branchQuestions.filter(q => !answeredQuestions.includes(q.id));
+    const lockedCount = unanswered.filter(q => cooldownNodes[q.id]).length;
+    
+    if (unanswered.length > 0 && lockedCount === unanswered.length) {
+      isDeadEnd = true;
+    }
+  }
 
   return (
     <>
+      {/* Emergency Reset Button */}
+      <div style={{ position: 'fixed', bottom: '40px', right: '40px', zIndex: 10 }}>
+        {isDeadEnd && (
+          <Button 
+            variant="outline-warning"
+            onClick={resetCooldowns}
+            className="hud-btn d-flex align-items-center gap-2 px-4 py-2"
+            style={{ borderRadius: '30px', backgroundColor: 'rgba(15, 23, 42, 0.7)', boxShadow: '0 0 15px rgba(251, 191, 36, 0.3)' }}
+          >
+            <i className="bi bi-arrow-clockwise fs-5"></i>
+            <span className="fw-bold" style={{ letterSpacing: '1px' }}>KHÔI PHỤC NƠ-RON</span>
+          </Button>
+        )}
+      </div>
+
       <div style={{ position: 'fixed', bottom: '40px', left: '40px', zIndex: 10 }}>
         {viewState === 'BRANCH' && (
           <Button 

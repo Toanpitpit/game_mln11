@@ -84,6 +84,8 @@ export const useGameStore = create((set, get) => ({
     cooldownNodes: { ...state.cooldownNodes, [questionId]: true }
   })),
 
+  resetCooldowns: () => set({ cooldownNodes: {} }),
+
   answerQuestion: (questionId, isCorrect) => {
     if (isCorrect) {
       set((state) => ({
