@@ -7,29 +7,7 @@ import { playGameSfx } from '../audio/AmbientAudio.jsx';
 const Level3Minigame = () => {
     const { setViewState } = useGameStore();
     
-    const [currentRoom, setCurrentRoom] = useState('wall_1');
-    const [inventory, setInventory] = useState([]);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [flashMsg, setFlashMsg] = useState('');
-    const [popup, setPopup] = useState(null); // 'family_tree', 'syllabus', null
-    const [isInventoryOpen, setIsInventoryOpen] = useState(false);
-    const [introStep, setIntroStep] = useState(0);
-    const [isPurifying, setIsPurifying] = useState(false);
-
-    const introTexts = [
-        "Ta là Kẻ Kế Thừa cuối cùng của dòng họ... Nơi đây từng là thánh địa Giả kim thuật của chúng ta.",
-        "Những thí nghiệm cấm kỵ nhằm thấu hiểu chân lý đã tạo ra những quái thai... và những linh hồn không thể siêu thoát.",
-        "Kẻ vắng mặt... Nếu ngươi nghe được những dòng này, xin hãy giải quyết những mâu thuẫn để kết thúc sự dằn vặt này..."
-    ];
-
-    const flashTimeout = useRef(null);
-    const showFlash = (msg) => {
-        setFlashMsg(msg);
-        if (flashTimeout.current) clearTimeout(flashTimeout.current);
-        flashTimeout.current = setTimeout(() => setFlashMsg(''), 3000);
-    };
-
-    // Game Flags
+    // Game Flags (must come first before useEffect)
     const [flags, setFlags] = useState({
         hasDagger: false,
         hasMatchbox: false,
@@ -49,6 +27,76 @@ const Level3Minigame = () => {
         beakerMoonlight: 0,
         burnerOn: false,
     });
+
+    const [currentRoom, setCurrentRoom] = useState('wall_1');
+    const [inventory, setInventory] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [flashMsg, setFlashMsg] = useState('');
+    const [popup, setPopup] = useState(null); // 'family_tree', 'syllabus', null
+    const [isInventoryOpen, setIsInventoryOpen] = useState(false);
+    const [introStep, setIntroStep] = useState(0);
+    const [isPurifying, setIsPurifying] = useState(false);
+    const [basementHintAvailable, setBasementHintAvailable] = useState(false);
+    const [wall2HintAvailable, setWall2HintAvailable] = useState(false);
+    const [wall3HintAvailable, setWall3HintAvailable] = useState(false);
+
+    const introTexts = [
+        "Ta là Kẻ Kế Thừa cuối cùng của dòng họ... Nơi đây từng là thánh địa Giả kim thuật của chúng ta.",
+        "Những thí nghiệm cấm kỵ nhằm thấu hiểu chân lý đã tạo ra những quái thai... và những linh hồn không thể siêu thoát.",
+        "Kẻ vắng mặt... Nếu ngươi nghe được những dòng này, xin hãy giải quyết những mâu thuẫn để kết thúc sự dằn vặt này..."
+    ];
+
+    const flashTimeout = useRef(null);
+    const showFlash = (msg) => {
+        setFlashMsg(msg);
+        if (flashTimeout.current) clearTimeout(flashTimeout.current);
+        flashTimeout.current = setTimeout(() => setFlashMsg(''), 3000);
+    };
+
+    // Dùng ref để tránh stale closure trong setInterval - luôn đọc giá trị mới nhất
+    const roomTimeRef = useRef({ basement: 0, wall_2: 0, wall_3: 0 });
+    const flagsRef = useRef(flags);
+    const currentRoomRef = useRef(currentRoom);
+    const hintRef = useRef({ basement: false, wall_2: false, wall_3: false });
+
+    // Cập nhật ref mỗi khi state thay đổi
+    useEffect(() => { flagsRef.current = flags; }, [flags]);
+    useEffect(() => { currentRoomRef.current = currentRoom; }, [currentRoom]);
+
+    // Global 1-second interval: chỉ chạy 1 lần khi mount, đọc giá trị từ refs
+    // Logic: cứ đếm 15s trong phòng là bật hint, không quan tâm puzzle đã giải chưa
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const acc = roomTimeRef.current;
+            const room = currentRoomRef.current;
+            const hints = hintRef.current;
+
+            if (room === 'basement' && !hints.basement) {
+                acc.basement++;
+                if (acc.basement >= 15) {
+                    hints.basement = true;
+                    setBasementHintAvailable(true);
+                }
+            }
+            if (room === 'wall_2' && !hints.wall_2) {
+                acc.wall_2++;
+                if (acc.wall_2 >= 15) {
+                    hints.wall_2 = true;
+                    setWall2HintAvailable(true);
+                }
+            }
+            if (room === 'wall_3' && !hints.wall_3) {
+                acc.wall_3++;
+                if (acc.wall_3 >= 15) {
+                    hints.wall_3 = true;
+                    setWall3HintAvailable(true);
+                }
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []); // Chỉ mount 1 lần duy nhất - không stale closure nhờ refs
+
+    // KHÔNG reset hint khi hoàn thành puzzle - hint vẫn sáng sau khi giải xong
 
     const addItem = (item) => {
         if (!inventory.some(i => i.id === item.id)) {
@@ -274,6 +322,9 @@ const Level3Minigame = () => {
 
                     {currentRoom === 'wall_2' && (
                         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                            <button onClick={() => showFlash('Xé rách bức màn đốt bí ẩn')} style={{ position: 'absolute', top: 20, left: 20, width: 60, height: 30, background: 'linear-gradient(135deg, #4a4a4a, #2a2a2a)', border: '2px solid #666', color: '#888', fontSize: '12px', fontWeight: 'bold', cursor: wall2HintAvailable ? 'pointer' : 'not-allowed', opacity: wall2HintAvailable ? 1 : 0.3, boxShadow: wall2HintAvailable ? '0 0 15px #ffcc00' : 'none', transition: 'all 0.3s ease', borderRadius: '4px' }} disabled={!wall2HintAvailable}>
+                                Gợi Ý
+                            </button>
                             <div className="l3-interactable l3-crow-woman has-hint" style={{ left: 325, top: 100 }} onClick={() => handleInteract('crow_woman')}>
                                 {/* Nền bức tranh */}
                             </div>
@@ -292,6 +343,9 @@ const Level3Minigame = () => {
 
                     {currentRoom === 'wall_3' && (
                         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                            <button onClick={() => showFlash('Cái Cây muốn được đục lỗ bằng vật nhọn')} style={{ position: 'absolute', top: 20, left: 20, width: 60, height: 30, background: 'linear-gradient(135deg, #4a4a4a, #2a2a2a)', border: '2px solid #666', color: '#888', fontSize: '12px', fontWeight: 'bold', cursor: wall3HintAvailable ? 'pointer' : 'not-allowed', opacity: wall3HintAvailable ? 1 : 0.3, boxShadow: wall3HintAvailable ? '0 0 15px #ffcc00' : 'none', transition: 'all 0.3s ease', borderRadius: '4px' }} disabled={!wall3HintAvailable}>
+                                Gợi Ý
+                            </button>
                             <div className="l3-interactable l3-tree-mutant has-hint" style={{ left: 300, top: 150 }} onClick={() => handleInteract('tree_mutant')}>
                             </div>
                             {!flags.hasSyringe && (
@@ -304,7 +358,7 @@ const Level3Minigame = () => {
 
                     {currentRoom === 'wall_4' && (
                         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                            <div className="l3-interactable l3-alchemy-table has-hint" style={{ left: 215, top: 250 }} onClick={() => handleInteract('alchemy_table')}></div>
+                            <div className="l3-interactable l3-alchemy-table has-hint" style={{ left: 255, top: 250 }} onClick={() => handleInteract('alchemy_table')}></div>
                             <div className="l3-interactable" style={{ position: 'absolute', left: 520, top: 350, fontSize: 40, filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.3)) sepia(1)' }} onClick={() => handleInteract('syllabus')}>
                                 📖
                             </div>
@@ -326,11 +380,14 @@ const Level3Minigame = () => {
                     {currentRoom === 'basement' && (
                         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                             <div className="l3-nav-arrow l3-nav-up" onClick={() => handleInteract('ladder_down')}>▲</div>
-                            <div className="l3-interactable l3-ghost" style={{ left: 350, top: 200, position: 'absolute', fontSize: 100, filter: 'grayscale(1) opacity(0.8) drop-shadow(0 0 20px #fff)' }} onClick={() => handleInteract('ghost')}>
+                            <button onClick={() => showFlash('Con Dao và con Ma tìm thấy nhau')} style={{ position: 'absolute', top: 20, left: 20, width: 60, height: 30, background: 'linear-gradient(135deg, #4a4a4a, #2a2a2a)', border: '2px solid #666', color: '#888', fontSize: '12px', fontWeight: 'bold', cursor: basementHintAvailable ? 'pointer' : 'not-allowed', opacity: basementHintAvailable ? 1 : 0.3, boxShadow: basementHintAvailable ? '0 0 15px #ffcc00' : 'none', transition: 'all 0.3s ease', borderRadius: '4px' }} disabled={!basementHintAvailable}>
+                                Gợi Ý
+                            </button>
+                            <div className="l3-interactable l3-ghost" style={{ left: 380, top: 320, position: 'absolute', fontSize: 100, filter: 'grayscale(1) opacity(0.8) drop-shadow(0 0 20px #fff)' }} onClick={() => handleInteract('ghost')}>
                                 👻
                             </div>
                             {!flags.hasFlask && (
-                                <div className="l3-interactable" style={{ position: 'absolute', left: 200, top: 400, width: 80, height: 80 }} onClick={() => handleInteract('pickup_flask')}>
+                                <div className="l3-interactable" style={{ position: 'absolute', left: 620, top: 350, width: 80, height: 80 }} onClick={() => handleInteract('pickup_flask')}>
                                     <img src="/level3/items/flask.png" alt="Flask" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.5))' }} />
                                 </div>
                             )}
@@ -352,7 +409,7 @@ const Level3Minigame = () => {
                     {/* ALCHEMY ZOOM ROOM */}
                     {currentRoom === 'alchemy_zoom' && (
                         <div style={{ position: 'relative', width: '100%', height: '100%', background: '#4e4135', display: 'flex', justifyContent: 'center' }}>
-                            <img src="/level3/alchemy.png" alt="Alchemy Set" style={{ width: 500, height: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }} />
+                            <img src="/level3/alchemy.png" alt="Alchemy Set" style={{ width: 500, height: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', filter: 'brightness(2) drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }} />
                             
                             {/* Beaker (Nhỏ dung dịch vào phễu phải) */}
                             <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 480, top: 150, width: 100, height: 100 }} onClick={() => handleInteract('alchemy_add_liquid')} title="Nhỏ dung dịch"></div>

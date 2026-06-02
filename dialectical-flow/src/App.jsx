@@ -39,8 +39,15 @@ function App() {
   const setViewState = useGameStore((state) => state.setViewState);
 
   useEffect(() => {
-    if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('ending-preview')) {
-      setViewState('ENDING');
+    const params = new URLSearchParams(window.location.search);
+    if (import.meta.env.DEV) {
+      if (params.has('ending-preview')) {
+        setViewState('ENDING');
+      } else if (params.has('level2')) {
+        setViewState('BRANCH');
+        useGameStore.getState().setCurrentBranch(2);
+      }
+      // removed level3 shortcut - must progress through game normally
     }
   }, [setViewState]);
 
@@ -89,7 +96,7 @@ function App() {
           <Level2Minigame />
         )}
         
-        {viewState === 'BRANCH' && currentBranch === 3 && (
+        {(viewState === 'BRANCH' && currentBranch === 3) || viewState === 'LEVEL_3' && (
           <Level3Minigame />
         )}
 
