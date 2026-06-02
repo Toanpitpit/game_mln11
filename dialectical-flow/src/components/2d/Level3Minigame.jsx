@@ -416,10 +416,10 @@ const Level3Minigame = () => {
                 {/* Popups */}
                 {popup === 'family_tree' && (
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
-                        <div className="l3-popup-content" onClick={e => e.stopPropagation()}>
+                        <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '115%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ borderBottom: '2px solid #555', paddingBottom: 10 }}>Cây Phả Hệ Biện Chứng</h2>
-                            <ul style={{ lineHeight: 1.8, fontSize: 18 }}>
+                            <h2 style={{ paddingBottom: 10 }}>Cây Phả Hệ Biện Chứng</h2>
+                            <ul style={{ lineHeight: 1.8, fontSize: 18, padding: '0 30px 30px 50px' }}>
                                 <li><strong>Thế hệ 1 (Khẳng định):</strong> Kẻ Khởi Nguyên - Chôn giấu bí mật trong bụng (Dịch Mật Bảo Thủ).</li>
                                 <li><strong>Thế hệ 2 (Phủ định):</strong> Người phụ nữ đầu Quạ - Phá vỡ lồng kính, nhưng trả giá bằng những Lệ sầu (Nước mắt Phủ định).</li>
                                 <li><strong>Thế hệ 3 (Phủ định của Phủ định):</strong> Kẻ Kế Thừa - Mang mầm mống của cái cũ nhưng đâm chồi mới (Máu rễ cây).</li>
@@ -431,10 +431,10 @@ const Level3Minigame = () => {
 
                 {popup === 'syllabus' && (
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
-                        <div className="l3-popup-content" onClick={e => e.stopPropagation()}>
+                        <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '115%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ borderBottom: '2px solid #555', paddingBottom: 10 }}>Giáo trình Giả kim thuật (Syllabus)</h2>
-                            <div style={{ fontSize: 18, fontFamily: 'monospace', lineHeight: 1.6 }}>
+                            <h2 style={{ paddingBottom: 10 }}>Giáo trình Giả kim thuật (Syllabus)</h2>
+                            <div style={{ fontSize: 18, fontFamily: 'monospace', lineHeight: 1.6, padding: '0 30px 30px 30px' }}>
                                 <p><strong>Quy luật Mâu thuẫn & Lượng đổi Chất đổi:</strong></p>
                                 <p>Mọi sự vật đều chứa đựng những mặt đối lập. Hãy trộn lẫn chúng trong chiếc bình thử nghiệm.</p>
                                 <p>Sự tích lũy từ từ về lượng (số giọt) khi được kích thích bởi Ngọn Lửa, sẽ dẫn đến một Bước Nhảy Vọt về chất (tạo ra vật phẩm mới).</p>
@@ -446,10 +446,10 @@ const Level3Minigame = () => {
 
                 {popup === 'cryptic_letter' && (
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
-                        <div className="l3-popup-content" style={{ background: '#c2b280', color: '#3e2723', border: '1px solid #5d4037', width: '500px' }} onClick={e => e.stopPropagation()}>
+                        <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '115%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', color: '#3e2723', width: '500px' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" style={{ color: '#3e2723' }} onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ borderBottom: '2px solid #5d4037', paddingBottom: 10, fontFamily: 'cursive' }}>Mảnh giấy vương vãi trên bàn</h2>
-                            <div style={{ fontSize: 18, fontFamily: 'cursive', lineHeight: 1.8, fontStyle: 'italic' }}>
+                            <h2 style={{ paddingBottom: 10, fontFamily: 'cursive' }}>Mảnh giấy vương vãi trên bàn</h2>
+                            <div style={{ fontSize: 18, fontFamily: 'cursive', lineHeight: 1.8, fontStyle: 'italic', padding: '0 30px 30px 30px' }}>
                                 <p>"Cái cũ kỹ bảo thủ và sự phủ định đầy bi phẫn... Khi hai thế hệ đầu tiên đối mặt nhau trong sức nóng rực rỡ, chúng sẽ hóa thành <strong style={{ color: '#000' }}>Làn sương mù</strong> đủ sức ăn mòn mọi rào cản gai góc."</p>
                             </div>
                         </div>
@@ -458,10 +458,10 @@ const Level3Minigame = () => {
 
                 {popup === 'book_clue' && (
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
-                        <div className="l3-popup-content" style={{ background: '#e8e4d9', color: '#111', border: '2px solid #222', width: '500px' }} onClick={e => e.stopPropagation()}>
+                        <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '133%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', color: '#111', width: '500px' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" style={{ color: '#111' }} onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ borderBottom: '2px solid #222', paddingBottom: 10 }}>Nhật ký của Kẻ Kế Thừa</h2>
-                            <div style={{ fontSize: 18, fontFamily: 'Times New Roman, serif', lineHeight: 1.8 }}>
+                            <h2 style={{ paddingBottom: 10 }}>Nhật ký của Kẻ Kế Thừa</h2>
+                            <div style={{ fontSize: 18, fontFamily: 'Times New Roman, serif', lineHeight: 1.8, padding: '0 30px 30px 30px' }}>
                                 <p>"Linh hồn yếu ớt trên căn gác mái luôn khát khao sự cứu rỗi... Nó chẳng thể tự mình siêu thoát."</p>
                                 <p>"Kẻ vất vưởng mang hình hài bóng ma sẽ mãi ôm chiếc hộp sọ... Trừ khi hắn được gột rửa bởi <strong style={{ color: '#333' }}>hai lần Nỗi Đau (Lệ)</strong> và <strong style={{ color: '#8b0000' }}>một giọt Huyết Quản (Máu rễ)</strong> của chính thế hệ mầm non, nung nấu dưới sức nóng của ngọn lửa sinh mệnh."</p>
                             </div>

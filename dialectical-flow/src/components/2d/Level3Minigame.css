@@ -193,7 +193,6 @@
 }
 
 .l3-popup-content {
-    background: #e8e4d9; /* Old paper color */
     padding: 30px;
     border-radius: 4px;
     max-width: 80%;
@@ -201,7 +200,7 @@
     overflow-y: auto;
     color: #1a1a1a;
     box-shadow: 0 0 30px rgba(0,0,0,0.8);
-    border: 2px solid #8b7d6b;
+    border: none;
 }
 
 .l3-close-btn {
