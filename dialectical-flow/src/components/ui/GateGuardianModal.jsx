@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from 'react-bootstrap';
 import { useGameStore } from '../../store/useGameStore';
+import { playGameSfx } from '../audio/AmbientAudio';
 
 const GateGuardianModal = () => {
   const { lockedPortalTarget, setLockedPortalTarget, hasKeyForBranch, consumeKeyAndUnlock } = useGameStore();
@@ -16,6 +17,7 @@ const GateGuardianModal = () => {
   if (!lockedPortalTarget) return null;
 
   const handleUnlock = () => {
+    playGameSfx('unlock');
     consumeKeyAndUnlock(lockedPortalTarget);
     setLockedPortalTarget(null);
   };

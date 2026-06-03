@@ -4,6 +4,7 @@ import { Html, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { useGameStore } from '../../../../store/useGameStore';
 import questionsData from '../../../../data/questions.json';
+import { playGameSfx } from '../../../audio/AmbientAudio';
 
 const Branch1Minigame = () => {
   const { activeNodeId, setViewState, answerQuestion, setRewardPopup } = useGameStore();
@@ -17,6 +18,7 @@ const Branch1Minigame = () => {
     setSelectedIdx(idx);
 
     if (idx === question.correctAnswerIndex) {
+      playGameSfx('correct');
       setAnsweredState('correct');
       answerQuestion(question.id, true);
       
@@ -43,6 +45,7 @@ const Branch1Minigame = () => {
         }
       }, 2000);
     } else {
+      playGameSfx('wrong');
       setAnsweredState('wrong');
       answerQuestion(question.id, false);
       setTimeout(() => {

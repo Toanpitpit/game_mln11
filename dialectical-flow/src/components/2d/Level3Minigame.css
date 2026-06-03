@@ -9,6 +9,21 @@
     display: flex;
 }
 
+.l3-ending-fade {
+    animation: l3-purification-fade 3s ease forwards;
+}
+
+@keyframes l3-purification-fade {
+    0% { opacity: 1; filter: brightness(1); }
+    45% { opacity: 0.88; filter: brightness(1.7) blur(1px); }
+    100% { opacity: 0; filter: brightness(0.2) blur(8px); }
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 20px #ffff00; }
+    50% { box-shadow: 0 0 30px #ffff00, 0 0 40px #ff9900; }
+}
+
 /* Room Container */
 .l3-room-container {
     flex: 1;
@@ -146,6 +161,10 @@
 }
 .l3-interactable img {
     mix-blend-mode: multiply; /* Xóa nền trắng cho item rơi trên đất */
+    transition: filter 0.2s;
+}
+.l3-interactable:hover img {
+    filter: brightness(1.1);
 }
 .l3-interactable:hover {
     filter: brightness(1.2);
@@ -183,7 +202,6 @@
 }
 
 .l3-popup-content {
-    background: #e8e4d9; /* Old paper color */
     padding: 30px;
     border-radius: 4px;
     max-width: 80%;
@@ -191,7 +209,7 @@
     overflow-y: auto;
     color: #1a1a1a;
     box-shadow: 0 0 30px rgba(0,0,0,0.8);
-    border: 2px solid #8b7d6b;
+    border: none;
 }
 
 .l3-close-btn {
@@ -237,7 +255,13 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    mix-blend-mode: multiply; /* Xóa nền trắng của bức ảnh giả kim */
+    mix-blend-mode: screen; /* Sáng hơn multiply */
+    filter: brightness(1.05);
+    transition: filter 0.2s;
+}
+
+.l3-alchemy-table:hover {
+    filter: brightness(1.3);
 }
 
 .l3-flask {

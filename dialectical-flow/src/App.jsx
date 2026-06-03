@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import HUD from './components/ui/hud/HUD';
 import MainCanvas from './components/3d/MainCanvas';
 import QuestionOverlay from './components/ui/QuestionOverlay';
@@ -6,6 +6,8 @@ import RewardOverlay from './components/ui/RewardOverlay';
 import GateGuardianModal from './components/ui/GateGuardianModal';
 import Level2Minigame from './components/2d/Level2Minigame';
 import Level3Minigame from './components/2d/Level3Minigame';
+import EndingSlideshow from './components/2d/EndingSlideshow';
+import AmbientAudio from './components/audio/AmbientAudio';
 import { useGameStore } from './store/useGameStore';
 import { Button } from 'react-bootstrap';
 
@@ -34,6 +36,11 @@ function App() {
   const addItem = useGameStore((state) => state.addItem);
   const viewState = useGameStore((state) => state.viewState);
   const currentBranch = useGameStore((state) => state.currentBranch);
+  const setViewState = useGameStore((state) => state.setViewState);
+
+  useEffect(() => {
+    // All dev shortcuts removed - must progress through game normally
+  }, [setViewState]);
 
   const giveTestItems = () => {
     addItem({ id: 'stone', name: 'Khối đá nguyên thủy', icon: '🪨' });
@@ -50,9 +57,12 @@ function App() {
       <ErrorBoundary>
         <MainCanvas />
       </ErrorBoundary>
+
+      <AmbientAudio />
+      {viewState === 'ENDING' && <EndingSlideshow />}
       
       {/* 2D UI Overlay Layer */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 10 }}>
+      {viewState !== 'ENDING' && <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 10 }}>
         
         <QuestionOverlay />
         <RewardOverlay />
@@ -77,11 +87,11 @@ function App() {
           <Level2Minigame />
         )}
         
-        {viewState === 'BRANCH' && currentBranch === 3 && (
+        {(viewState === 'BRANCH' && currentBranch === 3) || viewState === 'LEVEL_3' && (
           <Level3Minigame />
         )}
 
-      </div>
+      </div>}
     </>
   );
 }

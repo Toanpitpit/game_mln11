@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Row, Col } from 'react-bootstrap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../../store/useGameStore';
+import { playGameSfx } from '../../audio/AmbientAudio';
 
 const InventoryModal = ({ show, onHide }) => {
   const inventory = useGameStore((state) => state.inventory);
@@ -21,6 +22,7 @@ const InventoryModal = ({ show, onHide }) => {
     if (isCrafting || craftedResult) return;
     const data = e.dataTransfer.getData('application/json');
     if (data) {
+      playGameSfx('navigate');
       const item = JSON.parse(data);
       setSlots((prev) => {
         const newSlots = [...prev];
@@ -46,7 +48,13 @@ const InventoryModal = ({ show, onHide }) => {
   };
 
   const handleCraft = () => {
+    if (!slots[0] || !slots[1]) {
+      playGameSfx('wrong');
+      setCraftMessage('⚠️ Vui lòng đặt đủ 2 vật phẩm vào máy hợp nhất!');
+      return;
+    }
     if (slots[0] && slots[1]) {
+      playGameSfx('craft');
       setIsCrafting(true);
       setCraftMessage('Đang vận hành Lò Hợp Nhất...');
       
@@ -55,9 +63,11 @@ const InventoryModal = ({ show, onHide }) => {
         const result = craftItem(slots[0].id, slots[1].id);
         setIsCrafting(false);
         if (result) {
+          playGameSfx('unlock');
           setCraftedResult(result);
           setCraftMessage('✨ Hợp nhất thành công!');
         } else {
+          playGameSfx('wrong');
           setCraftMessage('❌ Các mảnh ghép không tương thích!');
           setSlots([null, null]);
         }
@@ -88,6 +98,9 @@ const InventoryModal = ({ show, onHide }) => {
               gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', 
               gap: '15px',
               minHeight: '250px',
+              maxHeight: '350px',
+              overflowY: 'auto',
+              paddingRight: '10px',
               alignContent: 'start'
             }}>
               <AnimatePresence>
@@ -209,7 +222,7 @@ const InventoryModal = ({ show, onHide }) => {
             {!craftedResult && (
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-100 px-3">
                 <Button 
-                  disabled={!slots[0] || !slots[1] || isCrafting} 
+                  disabled={isCrafting} 
                   onClick={handleCraft}
                   className={`craft-btn w-100 py-3 fw-bold text-uppercase ${isCrafting ? 'btn-warning' : 'btn-primary'}`}
                   style={{ borderRadius: '12px', letterSpacing: '2px', fontSize: '14px', transition: 'all 0.3s' }}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Level2Minigame.css';
 import { useGameStore } from '../../store/useGameStore.js';
+import { playGameSfx } from '../audio/AmbientAudio.jsx';
 
 const dialoguesHegel = [
     "[1] Sự phát triển luôn bắt đầu từ việc tích lũy dần dần về Lượng.",
@@ -31,6 +32,7 @@ const Level2Minigame = () => {
     const [previewItemIndex, setPreviewItemIndex] = useState(-1);
     const [quizSelectedIndex, setQuizSelectedIndex] = useState(0);
     const [safeCodeInput, setSafeCodeInput] = useState('');
+    const [hintVisible, setHintVisible] = useState(true);
 
     // Engine State (Refs for speed)
     const stateRef = useRef({
@@ -94,6 +96,7 @@ const Level2Minigame = () => {
     };
 
     const handleExit = () => {
+        playGameSfx('correct');
         setRewardPopup({ id: 'badge2', name: 'Huy hiệu Biện Chứng', icon: '🌟', targetViewState: 'HUB' });
         setViewState('HUB');
     };
@@ -109,6 +112,7 @@ const Level2Minigame = () => {
     useEffect(() => { quizRef.current = quizSelectedIndex; }, [quizSelectedIndex]);
 
     const handleInteractCore = () => {
+        playGameSfx('click');
         const p = stateRef.current.player;
         const state = stateRef.current;
         let interacted = false;
@@ -150,6 +154,7 @@ const Level2Minigame = () => {
                     if (el && el.style.display !== 'none') {
                         el.style.display = 'none';
                         setInventory(prev => [...prev, { id: 'energy_block', name: 'Khối năng lượng', icon: '🔋', type: 'equip', desc: 'Sự tích lũy về lượng.' }]);
+                        playGameSfx('pickup');
                         showFlash("ĐÃ NHẶT: KHỐI NĂNG LƯỢNG");
                     }
                 }
@@ -159,6 +164,7 @@ const Level2Minigame = () => {
                         state.flags.hasDarkOrb = true;
                         el.style.display = 'none';
                         setInventory(prev => [...prev, { id: 'orb_black', name: 'Quả cầu Bóng tối', icon: '🔮', type: 'equip', desc: 'Mặt đối lập của ánh sáng.' }]);
+                        playGameSfx('pickup');
                         showFlash("ĐÃ NHẶT: QUẢ CẦU BÓNG TỐI");
                     }
                 }
@@ -182,6 +188,7 @@ const Level2Minigame = () => {
                             showFlash(`Đang trong giới hạn Độ (${pct}%). Chưa có sự thay đổi về Chất.`);
                         } else {
                             state.flags.machineJumped = true;
+                            playGameSfx('craft');
                             showFlash("Đạt ĐIỂM NÚT! Bước nhảy xảy ra!");
                             document.getElementById('l2-machine-screen').textContent = "MAX";
                             document.getElementById('l2-machine-screen').style.color = "#fff";
@@ -207,6 +214,7 @@ const Level2Minigame = () => {
                     
                     if (hasWhite && hasBlack) {
                         state.flags.fusionDone = true;
+                        playGameSfx('craft');
                         const newInv = invRef.current.filter(i => i.id !== 'orb_white' && i.id !== 'orb_black');
                         
                         const ped = document.getElementById('l2-fusion-pedestal');
@@ -231,6 +239,7 @@ const Level2Minigame = () => {
                         const keyIndex = invRef.current.findIndex(i => i.id === 'key_dialect');
                         if (keyIndex !== -1) {
                             state.flags.doorUnlocked = true;
+                            playGameSfx('unlock');
                             document.getElementById('l2-door-lock-ui').textContent = "🔓";
                             document.getElementById('l2-exit-door').classList.add('unlocked');
                             showFlash("Cửa đã được mở khóa bằng Chìa khóa Biện chứng!");
@@ -338,6 +347,7 @@ const Level2Minigame = () => {
                 let checkDist = obj.type === 'door' ? 80 : CONFIG.interactDist;
                 if (dist(state.player.x, state.player.y, obj.x, obj.y) < checkDist) {
                     showPrompt = true; pX = obj.x; pY = obj.y - obj.h/2 - 10;
+                    if (obj.type === 'fusion') pY += 90; // Đẩy nút F của bệ dung hợp xuống 10px
                     break;
                 }
             }
@@ -353,6 +363,12 @@ const Level2Minigame = () => {
         }
         requestRef.current = requestAnimationFrame(gameLoop);
     };
+
+    // Auto-hide hint after 10 seconds
+    useEffect(() => {
+        const timer = setTimeout(() => setHintVisible(false), 5000);
+        return () => clearTimeout(timer);
+    }, []);
 
     useEffect(() => {
         const handleResize = () => {
@@ -429,6 +445,16 @@ const Level2Minigame = () => {
 
                 <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2000 }}>
                     <div id="l2-flash-msg" ref={flashRef}>THÔNG BÁO</div>
+
+                    {/* 10s hint overlay */}
+                    {hintVisible && (
+                        <div className="l2-hint-overlay" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(12, 15, 30, 0.92)', border: '1px solid rgba(255,255,255,0.12)', padding: '24px 40px', borderRadius: 16, backdropFilter: 'blur(8px)', pointerEvents: 'none', textAlign: 'center', zIndex: 2200 }}>
+                            <div style={{ color: '#f1d07a', fontSize: 18, fontWeight: 'bold', fontFamily: 'Unbounded, sans-serif', marginBottom: 8 }}>📜 HƯỚNG DẪN</div>
+                            <div style={{ color: '#e5e7eb', fontSize: 16, lineHeight: 1.6 }}>
+                                Thao tác bằng <strong style={{ color: '#fb923c' }}>WASD</strong> để tìm đến <strong style={{ color: '#fb923c' }}>Hegel</strong>
+                            </div>
+                        </div>
+                    )}
                     
                     <button 
                         type="button" 

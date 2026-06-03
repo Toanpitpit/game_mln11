@@ -18,6 +18,17 @@ export const useGameStore = create((set, get) => ({
   setCurrentBranch: (branch) => set({ currentBranch: branch }),
   setLockedPortalTarget: (id) => set({ lockedPortalTarget: id }),
   setRewardPopup: (item) => set({ rewardPopup: item }),
+  resetGame: () => set({
+    inventory: [],
+    unlockedPortals: [1],
+    currentBranch: null,
+    answeredQuestions: [],
+    cooldownNodes: {},
+    viewState: 'START',
+    activeNodeId: null,
+    lockedPortalTarget: null,
+    rewardPopup: null,
+  }),
 
   addItem: (item) => set((state) => ({
     inventory: [...state.inventory, item]
@@ -83,6 +94,8 @@ export const useGameStore = create((set, get) => ({
   setCooldown: (questionId) => set((state) => ({
     cooldownNodes: { ...state.cooldownNodes, [questionId]: true }
   })),
+
+  resetCooldowns: () => set({ cooldownNodes: {} }),
 
   answerQuestion: (questionId, isCorrect) => {
     if (isCorrect) {

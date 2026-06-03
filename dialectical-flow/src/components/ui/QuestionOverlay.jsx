@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../store/useGameStore';
 import questionsData from '../../data/questions.json';
+import { playGameSfx } from '../audio/AmbientAudio';
 
 // --- Branch 2 RPG Minigame Component ---
 const RPGMinigame = ({ question, onWin, onLose }) => {
@@ -96,6 +97,7 @@ const RPGMinigame = ({ question, onWin, onLose }) => {
   }, []); 
 
   const handleF = () => {
+    playGameSfx('navigate');
     setReadingIdx(prev => {
       if (prev !== null) return null; 
       let closest = null;
@@ -112,6 +114,7 @@ const RPGMinigame = ({ question, onWin, onLose }) => {
   };
 
   const handleJ = () => {
+    playGameSfx('pickup');
     setCarryingIdx(prev => {
       if (prev !== null) return null; 
       let closest = null;
@@ -345,6 +348,7 @@ const QuestionOverlay = () => {
   if (!question) return null;
 
   const triggerWin = () => {
+    playGameSfx('correct');
     setAnsweredState('correct');
     answerQuestion(question.id, true);
 
@@ -373,6 +377,7 @@ const QuestionOverlay = () => {
   };
 
   const triggerLose = (exit = true) => {
+    playGameSfx('wrong');
     setAnsweredState('wrong');
     if (currentBranch !== 'BOSS') {
       answerQuestion(question.id, false);
