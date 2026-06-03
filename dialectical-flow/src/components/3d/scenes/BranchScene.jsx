@@ -297,9 +297,9 @@ const BranchScene = () => {
   const dodecahedronGeo = useMemo(() => new THREE.DodecahedronGeometry(4, 0), []); // Boss node
 
   const getNodeGeometry = () => {
-    if (currentBranch === 1) return sphereGeo;
+    if (currentBranch === 1) return octahedronGeo;
     if (currentBranch === 2) return icosahedronGeo;
-    if (currentBranch === 3) return octahedronGeo;
+    if (currentBranch === 3) return sphereGeo;
     if (currentBranch === 'BOSS') return dodecahedronGeo;
     return sphereGeo;
   };
@@ -314,7 +314,7 @@ const BranchScene = () => {
     if (hoveredNode === idx) {
       return new THREE.MeshStandardMaterial({ color: '#60a5fa', emissive: '#3b82f6', emissiveIntensity: 1 });
     }
-    const baseColor = currentBranch === 1 ? '#a855f7' : currentBranch === 2 ? '#3b82f6' : currentBranch === 3 ? '#eab308' : '#ffffff';
+    const baseColor = currentBranch === 1 ? '#eab308' : currentBranch === 2 ? '#3b82f6' : currentBranch === 3 ? '#a855f7' : '#ffffff';
     return new THREE.MeshStandardMaterial({ color: baseColor, emissive: baseColor, emissiveIntensity: 0.2 });
   };
 
@@ -336,9 +336,9 @@ const BranchScene = () => {
   return (
     <group>
       {/* Background conditionally rendered based on Branch */}
-      {currentBranch === 1 && <Branch1Background />}
+      {currentBranch === 1 && <SolarSystemBackground />}
       {currentBranch === 2 && <ShootingStarsBackground />}
-      {currentBranch === 3 && <SolarSystemBackground />}
+      {currentBranch === 3 && <Branch1Background />}
       {currentBranch === 'BOSS' && <InfiniteGalaxiesBackground />}
       
       <NeuralConnections nodePositions={nodePositions} branchQuestions={branchQuestions} answeredQuestions={answeredQuestions} />

@@ -131,6 +131,10 @@ const Portal = ({ position, color, branchId, name, requiredItems }) => {
         setIsShattering(false);
         setWasUnlocked(true);
       }, 2000);
+    } else if (wasUnlocked && !isUnlocked) {
+      // Reset game triggered
+      setWasUnlocked(false);
+      setIsShattering(false);
     }
   }, [isUnlocked, wasUnlocked]);
 

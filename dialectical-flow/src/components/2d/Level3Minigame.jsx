@@ -15,6 +15,7 @@ const Level3Minigame = () => {
         hasFlask: false,
         
         crowReleased: false,
+        crowBurned: false,
         ghostCut: false,
         rootCut: false,
         atticUnlocked: false,
@@ -154,11 +155,15 @@ const Level3Minigame = () => {
         }
         else if (target === 'crow') {
             if (selectedItem === 'matchbox') {
-                showFlash("Con quạ hoảng sợ trước ngọn lửa và khóc ra những giọt lệ cam.");
                 if (hasItem('syringe')) {
-                    addItem({ id: 'tears_regret', name: 'Nước mắt Phủ định', icon: '/level3/items/tears.png' });
+                    showFlash("Con quạ thét lên trong ngọn lửa đỏ rực, khóc ra lệ cam rồi hóa thành tro bụi.");
+                    setFlags(f => ({...f, crowBurned: true}));
+                    playGameSfx('fire');
+                    setTimeout(() => {
+                        addItem({ id: 'tears_regret', name: 'Nước mắt Phủ định', icon: '/level3/items/tears.png' });
+                    }, 1500);
                 } else {
-                    showFlash("Cần một dụng cụ (Ống tiêm) để thu thập dung dịch.");
+                    showFlash("Cần Ống tiêm để thu thập nước mắt. Nếu đốt bây giờ sẽ uổng phí.");
                 }
             } else {
                 showFlash("Con quạ chớp mắt nhìn bạn tĩnh lặng.");
@@ -311,11 +316,8 @@ const Level3Minigame = () => {
                         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                             <div className="l3-interactable l3-family-tree has-hint" style={{ left: 250, top: 100 }} onClick={() => handleInteract('family_tree')}>
                             </div>
-                            <div className="l3-interactable has-hint" style={{ position: 'absolute', top: 20, left: 350, width: 100, height: 60, border: '2px dashed #555' }} onClick={() => handleInteract('hatch_up')}>
-                                {flags.atticUnlocked ? "Lối lên Gác Mái" : "Cửa bị dây leo bám"}
-                            </div>
+                            <div className="l3-nav-arrow l3-nav-up" onClick={() => handleInteract('hatch_up')}>▲</div>
                             <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 80, top: 350, width: 200, height: 100, cursor: 'pointer' }} onClick={() => handleInteract('book_clue')}>
-                                {/* Cuốn sách cũ trên ghế đẩu */}
                             </div>
                         </div>
                     )}
@@ -329,15 +331,18 @@ const Level3Minigame = () => {
                                 {/* Nền bức tranh */}
                             </div>
                             {flags.crowReleased && (
-                                <div className="l3-interactable" style={{ position: 'absolute', left: 200, top: 150, fontSize: 80, filter: 'drop-shadow(0 5px 10px rgba(0,0,0,0.8))' }} onClick={() => handleInteract('crow')}>
-                                    🐦‍⬛
+                                <div className={`l3-interactable ${flags.crowBurned ? 'l3-burn-effect' : ''}`} style={{ position: 'absolute', left: 20, top: 150, width: 350, height: 350, pointerEvents: flags.crowBurned ? 'none' : 'auto' }} onClick={() => handleInteract('crow')}>
+                                    <img src="/level3/orthes/quar.png" alt="Crow" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply', filter: flags.crowBurned ? 'none' : 'drop-shadow(0 5px 10px rgba(0,0,0,0.8))' }} />
                                 </div>
                             )}
                             {!flags.hasMatchbox && (
-                                <div className="l3-interactable" style={{ position: 'absolute', left: 100, top: 300, width: 60, height: 60 }} onClick={() => handleInteract('pickup_matchbox')}>
-                                    <img src="/level3/items/matchbox.png" alt="Matchbox" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                <div className="l3-interactable" style={{ position: 'absolute', left: 310, top: 390, width: 45, height: 45 }} onClick={() => handleInteract('pickup_matchbox')}>
+                                    <img src="/level3/items/matchbox.png" alt="Matchbox" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 5px 5px rgba(0,0,0,0.5))' }} />
                                 </div>
                             )}
+                            <div className="l3-interactable" style={{ position: 'absolute', left: 520, top: 340, width: 140, height: 140 }} onClick={() => handleInteract('syllabus')}>
+                                <img src="/level3/orthes/book.png" alt="Syllabus Book" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply', filter: 'drop-shadow(0 5px 10px rgba(0,0,0,0.8)) sepia(0.5)' }} />
+                            </div>
                         </div>
                     )}
 
@@ -359,16 +364,13 @@ const Level3Minigame = () => {
                     {currentRoom === 'wall_4' && (
                         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                             <div className="l3-interactable l3-alchemy-table has-hint" style={{ left: 255, top: 250 }} onClick={() => handleInteract('alchemy_table')}></div>
-                            <div className="l3-interactable" style={{ position: 'absolute', left: 520, top: 350, fontSize: 40, filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.3)) sepia(1)' }} onClick={() => handleInteract('syllabus')}>
-                                📖
-                            </div>
                             <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 400, top: 280, width: 120, height: 80, cursor: 'pointer' }} onClick={() => handleInteract('papers')}>
                                 {/* Mảnh giấy trên bàn (Papers) */}
                             </div>
                             
                             {!flags.hasDagger && (
-                                <div className="l3-interactable" style={{ position: 'absolute', left: 240, top: 340, width: 60, height: 60 }} onClick={() => handleInteract('pickup_dagger')}>
-                                    <img src="/level3/items/dagger.png" alt="Dagger" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                <div className="l3-interactable" style={{ position: 'absolute', left: 190, top: 260, width: 60, height: 60, transform: 'rotate(-20deg)' }} onClick={() => handleInteract('pickup_dagger')}>
+                                    <img src="/level3/items/dagger.png" alt="Dagger" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 5px 5px rgba(0,0,0,0.5))' }} />
                                 </div>
                             )}
 
@@ -383,8 +385,8 @@ const Level3Minigame = () => {
                             <button onClick={() => showFlash('Con Dao và con Ma tìm thấy nhau')} style={{ position: 'absolute', top: 20, left: 20, width: 60, height: 30, background: 'linear-gradient(135deg, #4a4a4a, #2a2a2a)', border: '2px solid #666', color: '#888', fontSize: '12px', fontWeight: 'bold', cursor: basementHintAvailable ? 'pointer' : 'not-allowed', opacity: basementHintAvailable ? 1 : 0.3, boxShadow: basementHintAvailable ? '0 0 15px #ffcc00' : 'none', transition: 'all 0.3s ease', borderRadius: '4px' }} disabled={!basementHintAvailable}>
                                 Gợi Ý
                             </button>
-                            <div className="l3-interactable l3-ghost" style={{ left: 380, top: 320, position: 'absolute', fontSize: 100, filter: 'grayscale(1) opacity(0.8) drop-shadow(0 0 20px #fff)' }} onClick={() => handleInteract('ghost')}>
-                                👻
+                            <div className="l3-interactable l3-ghost" style={{ left: 350, top: 300, position: 'absolute', width: 150, height: 150 }} onClick={() => handleInteract('ghost')}>
+                                <img src="/level3/orthes/ghosh.png" alt="Ghost" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply', filter: 'opacity(0.8) drop-shadow(0 0 20px #fff)' }} />
                             </div>
                             {!flags.hasFlask && (
                                 <div className="l3-interactable" style={{ position: 'absolute', left: 620, top: 350, width: 80, height: 80 }} onClick={() => handleInteract('pickup_flask')}>
@@ -397,8 +399,8 @@ const Level3Minigame = () => {
                     {currentRoom === 'attic' && (
                         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                             <div className="l3-nav-arrow l3-nav-down" onClick={() => handleInteract('ladder_down')}>▼</div>
-                            <div className="l3-interactable l3-corrupted-soul" style={{ left: 340, top: 150, position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => handleInteract('skull')}>
-                                <div style={{ fontSize: 60, filter: 'drop-shadow(0 0 15px #ff0000)' }}>💀</div>
+                            <div className="l3-interactable l3-corrupted-soul" style={{ left: 340, top: 150, position: 'absolute', width: 120, height: 120, display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => handleInteract('skull')}>
+                                <img src="/level3/orthes/head.png" alt="Corrupted Soul" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply', filter: 'drop-shadow(0 0 15px #ff0000)' }} />
                             </div>
                             <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 100, top: 100, width: 100, height: 150, border: '4px solid rgba(255,255,255,0.1)' }} onClick={() => handleInteract('window_attic')}>
                                 {/* Cửa sổ */}
@@ -412,24 +414,36 @@ const Level3Minigame = () => {
                             <img src="/level3/alchemy.png" alt="Alchemy Set" style={{ width: 500, height: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', filter: 'brightness(2) drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }} />
                             
                             {/* Beaker (Nhỏ dung dịch vào phễu phải) */}
-                            <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 480, top: 150, width: 100, height: 100 }} onClick={() => handleInteract('alchemy_add_liquid')} title="Nhỏ dung dịch"></div>
+                            <div className="l3-interactable" style={{ position: 'absolute', left: 490, top: 120, width: 80, height: 80, display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => handleInteract('alchemy_add_liquid')} title="Đổ dung dịch vào phễu này">
+                                <div className="l3-liquid-hint-dot" title="Nơi nhỏ dung dịch" />
+                            </div>
                             
-                            {/* Burner (Bếp cồn dưới bình phải) */}
-                            <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 470, top: 340, width: 80, height: 80 }} onClick={() => handleInteract('alchemy_light_burner')} title="Châm lửa bếp cồn"></div>
+                            {/* Burner (Bếp cồn dưới bình chính) */}
+                            <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 360, top: 380, width: 80, height: 80 }} onClick={() => handleInteract('alchemy_light_burner')} title="Châm lửa bếp cồn"></div>
                             
-                            {flags.burnerOn && <div style={{ position: 'absolute', left: 480, top: 290, fontSize: 60, filter: 'drop-shadow(0 0 20px #ff6600)', pointerEvents: 'none' }}>🔥</div>}
+                            {flags.burnerOn && <div style={{ position: 'absolute', left: 375, top: 345, fontSize: 50, filter: 'drop-shadow(0 0 20px #ff6600)', pointerEvents: 'none' }}>🔥</div>}
                             
                             {/* Flask (Bình thu thập thành phẩm bên trái) */}
                             <div className="l3-interactable has-hint" style={{ position: 'absolute', left: 240, top: 200, width: 120, height: 180 }} onClick={() => handleInteract('alchemy_brew')} title="Bắt đầu chưng cất (Đưa bình rỗng vào)"></div>
 
-                            {/* HUD Trạng thái bình chứa */}
-                            <div style={{ position: 'absolute', right: 20, top: 20, background: 'rgba(20,15,10,0.8)', color: '#dcd3c6', padding: '15px 20px', borderRadius: 8, fontSize: 16, border: '2px solid #5a4b3c', pointerEvents: 'none' }}>
-                                <h3 style={{ margin: '0 0 10px 0', fontSize: 18, color: '#fff', textAlign: 'center' }}>Bình Thử Nghiệm</h3>
-                                <div>Dịch Mật (Đen): <strong style={{ color: '#aaa' }}>{flags.beakerBile}</strong> giọt</div>
-                                <div>Nước Mắt (Lệ): <strong style={{ color: '#64b5f6' }}>{flags.beakerTears}</strong> giọt</div>
-                                <div>Máu Rễ Cây: <strong style={{ color: '#ef5350' }}>{flags.beakerBlood}</strong> giọt</div>
-                                <div style={{ color: flags.burnerOn ? '#ff6600' : '#888', marginTop: 10, fontWeight: 'bold' }}>
-                                    Bếp cồn: {flags.burnerOn ? 'Đang cháy 🔥' : 'Đã tắt'}
+                            {/* HUD Trạng thái bình chứa - Ống nghiệm hiển thị bằng vạch màu */}
+                            <div className="l3-alchemy-tube-container" style={{ position: 'absolute', left: 30, top: 50, fontFamily: 'Times New Roman, serif', background: 'rgba(20,15,10,0.85)', padding: '20px 25px', borderRadius: '12px', border: '2px solid #8b7355', boxShadow: '0 0 20px rgba(0,0,0,0.9)', pointerEvents: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <h3 style={{ margin: '0 0 15px 0', fontSize: 22, color: '#eaddd0', textShadow: '1px 1px 3px #000', borderBottom: '1px solid #8b7355', paddingBottom: '10px' }}>Hỗn Hợp</h3>
+                                
+                                {/* Ống nghiệm */}
+                                <div style={{ width: 45, height: 220, background: 'rgba(255,255,255,0.05)', border: '3px solid #6b5335', borderRadius: '0 0 25px 25px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column-reverse', boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8)' }}>
+                                    {Array.from({ length: flags.beakerBile }).map((_, i) => <div key={`bile-${i}`} style={{ height: '33.33%', background: 'linear-gradient(to right, #111, #333, #111)', borderTop: '2px solid rgba(255,255,255,0.1)', boxShadow: 'inset 0 0 5px #000', pointerEvents: 'auto' }} title="Dịch Mật (Đen)" />)}
+                                    {Array.from({ length: flags.beakerTears }).map((_, i) => <div key={`tears-${i}`} style={{ height: '33.33%', background: 'linear-gradient(to right, #2196f3, #64b5f6, #2196f3)', borderTop: '2px solid rgba(255,255,255,0.3)', boxShadow: 'inset 0 0 5px #1976d2', pointerEvents: 'auto' }} title="Nước Mắt (Xanh)" />)}
+                                    {Array.from({ length: flags.beakerBlood }).map((_, i) => <div key={`blood-${i}`} style={{ height: '33.33%', background: 'linear-gradient(to right, #d32f2f, #ef5350, #d32f2f)', borderTop: '2px solid rgba(255,255,255,0.3)', boxShadow: 'inset 0 0 5px #c62828', pointerEvents: 'auto' }} title="Máu Rễ (Đỏ)" />)}
+                                    {Array.from({ length: flags.beakerMoonlight }).map((_, i) => <div key={`moon-${i}`} style={{ height: '33.33%', background: 'linear-gradient(to right, #fbc02d, #fff59d, #fbc02d)', borderTop: '2px solid rgba(255,255,255,0.5)', boxShadow: '0 0 15px #fff9c4', pointerEvents: 'auto' }} title="Ánh Trăng (Vàng)" />)}
+                                    
+                                    {/* Vạch chia độ */}
+                                    <div style={{ position: 'absolute', width: '100%', height: '33.33%', bottom: '33.33%', borderBottom: '1px dashed rgba(255,255,255,0.2)', pointerEvents: 'none' }}></div>
+                                    <div style={{ position: 'absolute', width: '100%', height: '33.33%', bottom: '66.66%', borderBottom: '1px dashed rgba(255,255,255,0.2)', pointerEvents: 'none' }}></div>
+                                </div>
+                                
+                                <div style={{ marginTop: 15, fontSize: 16, color: flags.burnerOn ? '#ff9800' : '#888', fontStyle: 'italic', textShadow: flags.burnerOn ? '0 0 5px #ff9800' : 'none' }}>
+                                    {flags.burnerOn ? 'Đang đun sôi...' : 'Đang nguội lạnh'}
                                 </div>
                             </div>
 
@@ -475,8 +489,8 @@ const Level3Minigame = () => {
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
                         <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '115%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ paddingBottom: 10 }}>Cây Phả Hệ Biện Chứng</h2>
-                            <ul style={{ lineHeight: 1.8, fontSize: 18, padding: '0 30px 30px 50px' }}>
+                            <h2 style={{ paddingBottom: 10, textAlign: 'center', fontSize: 20 }}>Cây Phả Hệ Biện Chứng</h2>
+                            <ul style={{ lineHeight: 1.6, fontSize: 14, padding: '0 40px 10px 60px' }}>
                                 <li><strong>Thế hệ 1 (Khẳng định):</strong> Kẻ Khởi Nguyên - Chôn giấu bí mật trong bụng (Dịch Mật Bảo Thủ).</li>
                                 <li><strong>Thế hệ 2 (Phủ định):</strong> Người phụ nữ đầu Quạ - Phá vỡ lồng kính, nhưng trả giá bằng những Lệ sầu (Nước mắt Phủ định).</li>
                                 <li><strong>Thế hệ 3 (Phủ định của Phủ định):</strong> Kẻ Kế Thừa - Mang mầm mống của cái cũ nhưng đâm chồi mới (Máu rễ cây).</li>
@@ -490,8 +504,8 @@ const Level3Minigame = () => {
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
                         <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '115%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ paddingBottom: 10 }}>Giáo trình Giả kim thuật (Syllabus)</h2>
-                            <div style={{ fontSize: 18, fontFamily: 'monospace', lineHeight: 1.6, padding: '0 30px 30px 30px' }}>
+                            <h2 style={{ paddingBottom: 10, textAlign: 'center', fontSize: 20 }}>Giáo trình Giả kim thuật (Syllabus)</h2>
+                            <div style={{ fontSize: 14, fontFamily: 'monospace', lineHeight: 1.5, padding: '0 50px 10px 50px' }}>
                                 <p><strong>Quy luật Mâu thuẫn & Lượng đổi Chất đổi:</strong></p>
                                 <p>Mọi sự vật đều chứa đựng những mặt đối lập. Hãy trộn lẫn chúng trong chiếc bình thử nghiệm.</p>
                                 <p>Sự tích lũy từ từ về lượng (số giọt) khi được kích thích bởi Ngọn Lửa, sẽ dẫn đến một Bước Nhảy Vọt về chất (tạo ra vật phẩm mới).</p>
@@ -505,8 +519,8 @@ const Level3Minigame = () => {
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
                         <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '115%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', color: '#3e2723', width: '500px' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" style={{ color: '#3e2723' }} onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ paddingBottom: 10, fontFamily: 'cursive' }}>Mảnh giấy vương vãi trên bàn</h2>
-                            <div style={{ fontSize: 18, fontFamily: 'cursive', lineHeight: 1.8, fontStyle: 'italic', padding: '0 30px 30px 30px' }}>
+                            <h2 style={{ paddingBottom: 10, fontFamily: 'cursive', textAlign: 'center', fontSize: 20 }}>Mảnh giấy vương vãi trên bàn</h2>
+                            <div style={{ fontSize: 15, fontFamily: 'cursive', lineHeight: 1.6, fontStyle: 'italic', padding: '0 50px 10px 50px' }}>
                                 <p>"Cái cũ kỹ bảo thủ và sự phủ định đầy bi phẫn... Khi hai thế hệ đầu tiên đối mặt nhau trong sức nóng rực rỡ, chúng sẽ hóa thành <strong style={{ color: '#000' }}>Làn sương mù</strong> đủ sức ăn mòn mọi rào cản gai góc."</p>
                             </div>
                         </div>
@@ -517,8 +531,8 @@ const Level3Minigame = () => {
                     <div className="l3-popup-overlay" onClick={() => setPopup(null)}>
                         <div className="l3-popup-content" style={{ backgroundImage: 'url(/level3/items/Pngtree.png)', backgroundSize: '133%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', color: '#111', width: '500px' }} onClick={e => e.stopPropagation()}>
                             <button className="l3-close-btn" style={{ color: '#111' }} onClick={() => setPopup(null)}>×</button>
-                            <h2 style={{ paddingBottom: 10 }}>Nhật ký của Kẻ Kế Thừa</h2>
-                            <div style={{ fontSize: 18, fontFamily: 'Times New Roman, serif', lineHeight: 1.8, padding: '0 30px 30px 30px' }}>
+                            <h2 style={{ paddingBottom: 10, textAlign: 'center', fontSize: 20 }}>Nhật ký của Kẻ Kế Thừa</h2>
+                            <div style={{ fontSize: 15, fontFamily: 'Times New Roman, serif', lineHeight: 1.6, padding: '0 50px 10px 50px' }}>
                                 <p>"Linh hồn yếu ớt trên căn gác mái luôn khát khao sự cứu rỗi... Nó chẳng thể tự mình siêu thoát."</p>
                                 <p>"Kẻ vất vưởng mang hình hài bóng ma sẽ mãi ôm chiếc hộp sọ... Trừ khi hắn được gột rửa bởi <strong style={{ color: '#333' }}>hai lần Nỗi Đau (Lệ)</strong> và <strong style={{ color: '#8b0000' }}>một giọt Huyết Quản (Máu rễ)</strong> của chính thế hệ mầm non, nung nấu dưới sức nóng của ngọn lửa sinh mệnh."</p>
                             </div>

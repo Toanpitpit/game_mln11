@@ -87,7 +87,7 @@ function App() {
           <Level2Minigame />
         )}
         
-        {(viewState === 'BRANCH' && currentBranch === 3) || viewState === 'LEVEL_3' && (
+        {((viewState === 'BRANCH' && currentBranch === 3) || viewState === 'LEVEL_3') && (
           <Level3Minigame />
         )}
 
