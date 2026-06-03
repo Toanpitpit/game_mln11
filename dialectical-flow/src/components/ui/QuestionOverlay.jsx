@@ -341,6 +341,13 @@ const QuestionOverlay = () => {
   } = useGameStore();
 
   const [answeredState, setAnsweredState] = useState(null); // 'correct', 'wrong', null
+  const answeringRef = useRef(false); // Guard chống double-click nhanh
+
+  // Reset trạng thái khi mở câu hỏi mới (tránh hiển thị đáp án cũ)
+  useEffect(() => {
+    setAnsweredState(null);
+    answeringRef.current = false;
+  }, [activeNodeId]);
 
   if (viewState !== 'QUESTION' || activeNodeId === null) return null;
 
@@ -390,7 +397,8 @@ const QuestionOverlay = () => {
   };
 
   const handleStandardAnswer = (idx) => {
-    if (answeredState) return;
+    if (answeredState || answeringRef.current) return;
+    answeringRef.current = true;
     if (idx === question.correctAnswerIndex) {
       triggerWin();
     } else {
@@ -399,6 +407,7 @@ const QuestionOverlay = () => {
   };
 
   const closeOverlay = () => {
+    answeringRef.current = false;
     setAnsweredState(null);
     setViewState('BRANCH');
   };
